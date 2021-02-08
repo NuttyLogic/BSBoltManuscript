@@ -54,7 +54,7 @@ def run_alignment(alignment_command, alignment_tool, description, output_path):
     alignment = subprocess.Popen([x for x in alignment_command if x], stdout=subprocess.PIPE, universal_newlines=True)
     if alignment_tool in sam_aligners:
         # if output as sam pipe to samtools and output bam
-        samtools_convert = ['samtools', 'view', '-b', '-']
+        samtools_convert = ['samtools', 'view', '-@', '2', '-b', '-']
         with open(f'{output_path}.bam', 'wb') as bam_out:
             bam_conversion = subprocess.Popen(samtools_convert,
                                               stdin=alignment.stdout,
@@ -73,7 +73,7 @@ def run_alignment(alignment_command, alignment_tool, description, output_path):
 
 alignment_defaults = {
     'BSBolt': dict(output='-O', undirectional=['-UN'], fastq1='-F1', fastq2='-F2', index=['-DB', f'{index_dir}bsbolt_index'], 
-                  threads='-t', defaults=['python3', '-m', 'BSBolt', 'Align']),
+                  threads='-t', defaults=['python3', '-m', 'BSBolt', 'Align', '-OT', '2']),
     
     'bsseeker': dict(output='-o', undirectional=['-t', 'Y'], fastq1='-1', fastq2='-2', index=['-g', 'hg38_lambda.fa.gz', '-d', f'{index_dir}bsseeker_index'],
                     threads='--bt2-p', defaults=['~/BSBoltPaper/Tools/Python-2.7.18rc1/python', f'{bsseeker_dir}bs_seeker2-align.py', '--aligner', 'bowtie2', 
